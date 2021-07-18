@@ -29,7 +29,7 @@ import time
 
 if __name__ == "__main__":
     graphs = []
-    for k, v in ConnectedSimpleGraphs().generate(4).items():
+    for k, v in ConnectedSimpleGraphs().generate(5).items():
         for vi in v:
             graphs.append(vi)
 
@@ -68,6 +68,6 @@ if __name__ == "__main__":
     ax[0].set_ylabel("Timings")
     ax[1].set_ylabel("Ratio timing")
     ax[0].set_yscale("log")
-    # ax[1].set_yscale("log")
+    ax[1].set_yscale("log")
     fig.show()
     plt.show(block=True)

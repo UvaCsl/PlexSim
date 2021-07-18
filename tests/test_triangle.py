@@ -1,4 +1,5 @@
 from plexsim.models import ValueNetwork
+from plexsim.models.value_network2 import ValueNetwork as VN2
 import matplotlib.pyplot as plt, cmasher as cmr
 import numpy as np, os, sys, networkx as nx, warnings
 from plexsim import models
@@ -57,10 +58,12 @@ def test_specific(graph: nx.Graph, nodes: list = None):
 
 
 def double_y():
-    g = nx.path_graph(3)
-    g.add_edge(1, 3)
-    r = create_rule_full(nx.path_graph(3))
-    s = np.array([*np.arange(3), 2])
+    n = 4
+    g = nx.path_graph(n)
+    g.add_edge(1, 10)
+    g.add_edge(10, 11)
+    r = create_rule_full(nx.path_graph(n))
+    s = np.array([*np.arange(n), n - 2, n - 1])
     m = ValueNetwork(g, rules=r, agentStates=np.arange(len(r)))
     m.states = s
     test_crawl_single(m, target=1, verbose=1)
@@ -74,6 +77,32 @@ def double_y():
         c.append(ci)
     nx.draw(g, with_labels=1, node_color=c)
     plt.show()
+
+
+def unrolled_cycle():
+    n = 4
+    g = nx.path_graph(n)
+
+    r = create_rule_full(nx.cycle_graph(n - 1))
+    s = np.array([*np.arange(n - 1), 0])
+
+    m = ValueNetwork(g, rules=r, agentStates=np.arange(len(r)))
+    m.states = s
+
+    print(s.size, len(g))
+    assert s.size == m.nNodes
+
+    x = np.linspace(0, 1, m.nStates, 0)
+    colors = cmr.guppy(x)
+    c = []
+    for node in range(m.nNodes):
+        s = int(m.states[node])
+        ci = colors[s]
+        c.append(ci)
+    nx.draw(g, with_labels=1, node_color=c)
+    plt.show()
+
+    test_crawl_single(m, target=1, verbose=1)
 
 
 g = nx.path_graph(5)
@@ -93,4 +122,5 @@ g = nx.path_graph(2)
 # test.test_specific(g)
 
 # test_specific(g, nodes=[1])
-double_y()
+# double_y()
+unrolled_cycle()
